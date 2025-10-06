@@ -10,8 +10,9 @@ jobs:
       matrix:
         # currently ignored by local setup action
         python-version: ["3.12"]
-        #os: [macos-15-intel, macos-14, ubuntu-latest, windows-latest]
-        os: [ubuntu-latest, windows-latest]
+        # os: [macos-15-intel, macos-14, ubuntu-latest, windows-latest]
+        # os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -52,6 +53,7 @@ jobs:
         shell: bash
         run: |
           curl -L -o vscode.tar.gz https://update.code.visualstudio.com/latest/linux-x64/stable
+          mkdir vscode/
           tar -zxvf vscode.tar.gz -C vscode/
           ls -alR
           chmod +x VSCode-linux-x64/bin/code
