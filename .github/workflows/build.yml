@@ -56,8 +56,8 @@ jobs:
           mkdir vscode/
           tar -zxvf vscode.tar.gz -C vscode/
           ls -alR
-          chmod +x VSCode-linux-x64/bin/code
-          ./VSCode-linux-x64/bin/code --install-extension bernhard-42.ocp-cad-viewer --install-extension ms-python.python --install-extension ms-toolsai.jupyter --install-extension ms-python.black-formatter
+          chmod +x vscode/VSCode-linux-x64/bin/code
+          ./vscode/VSCode-linux-x64/bin/code --install-extension bernhard-42.ocp-cad-viewer --install-extension ms-python.python --install-extension ms-toolsai.jupyter --install-extension ms-python.black-formatter
       # TODO: add missing mac x64 & arm64 [darwin-universal]
       
       - name: windows get VSCode
