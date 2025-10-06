@@ -1,0 +1,54 @@
+name: build
+
+# on: [push, pull_request, workflow_dispatch]
+on: [workflow_dispatch]
+jobs:
+
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [
+          "3.12", # currently ignored by local setup action
+          ]
+        os: [macos-13, macos-14, ubuntu-latest, windows-latest]
+
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup/
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: shell
+        shell: bash
+        #TODO: cleanup and harmonization
+        run: |
+          pwd
+          ls -alR
+          echo $PATH
+          export PATH="${GITHUB_WORKSPACE}/uv:$PATH"
+          echo $PATH
+          uv python find
+          uv python list
+    
+      # - name: linux/mac path patch script
+      #   if: runner.os != 'Windows'
+      #   shell: bash
+      #   run: |
+      #     cp scripts/path_patch.sh ./
+      
+      # - name: windows path patch script
+      #   if: runner.os == 'Windows'
+      #   shell: bash
+      #   run: |
+      #     cp scripts/path_patch.bat ./
+          
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cadoodle-build123d-portable-${{ matrix.os }}
+          # TODO: make cross-platform compat
+          include-hidden-files: true # This line is crucial for including hidden files
+          path: |
+            pyinst/
+            python/
+            uv/
