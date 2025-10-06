@@ -57,8 +57,9 @@ jobs:
           tar -zxvf vscode.tar.gz -C vscode/
           ls -alR
           chmod +x vscode/VSCode-linux-x64/bin/code
-          ./vscode/VSCode-linux-x64/bin/code --install-extension bernhard-42.ocp-cad-viewer --install-extension ms-python.python --install-extension ms-toolsai.jupyter --install-extension ms-python.black-formatter
+          ./vscode/VSCode-linux-x64/bin/code --install-extension ms-python.python --install-extension ms-toolsai.jupyter --install-extension ms-python.black-formatter
       # TODO: add missing mac x64 & arm64 [darwin-universal]
+      # --install-extension bernhard-42.ocp-cad-viewer
       
       - name: windows get VSCode
         if: runner.os == 'Windows'
@@ -69,6 +70,7 @@ jobs:
           ls -alR
           vscode/Code.exe --install-extension ms-python.python --install-extension ms-toolsai.jupyter --install-extension ms-python.black-formatter
       # --install-extension bernhard-42.ocp-cad-viewer
+          
       - uses: actions/upload-artifact@v4
         with:
           name: build123d-portable-${{ matrix.os }}
