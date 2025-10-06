@@ -33,7 +33,4 @@ runs:
         export PATH="${GITHUB_WORKSPACE}/uv:$PATH"
         echo $PATH
         uv python install 3.12
-        rm ./pyinst/cpython-3.*/lib/python3.*/EXTERNALLY-MANAGED
-       
-        uv venv --relocatable --python 3.12
-        uv pip install build123d ocp_vscode git+https://github.com/jdegenstein/nice123d@v0.0.3 git+https://github.com/GarryBGoode/gggears --python ./pyinst/cpython-3*
+
