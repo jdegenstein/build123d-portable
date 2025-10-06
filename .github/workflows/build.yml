@@ -30,18 +30,22 @@ jobs:
           uv python find
           uv python list
     
-      # - name: linux/mac path patch script
-      #   if: runner.os != 'Windows'
-      #   shell: bash
-      #   run: |
-      #     cp scripts/path_patch.sh ./
-      
-      # - name: windows path patch script
-      #   if: runner.os == 'Windows'
-      #   shell: bash
-      #   run: |
-      #     cp scripts/path_patch.bat ./
-          
+      - name: linux/mac path patch script
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          export PATH="${GITHUB_WORKSPACE}/uv:$PATH"
+          rm ./pyinst/cpython-3.*/lib/python3.*/EXTERNALLY-MANAGED
+          uv pip install build123d ocp_vscode git+https://github.com/jdegenstein/nice123d@v0.0.3 git+https://github.com/GarryBGoode/gggears --python ./pyinst/cpython-3*
+
+      - name: windows path patch script
+        if: runner.os == 'Windows'
+        shell: bash
+        run: |
+          export PATH="${GITHUB_WORKSPACE}/uv:$PATH"
+          rm ./pyinst/cpython-3.*/Lib/EXTERNALLY-MANAGED
+          uv pip install build123d ocp_vscode git+https://github.com/jdegenstein/nice123d@v0.0.3 git+https://github.com/GarryBGoode/gggears --python ./pyinst/cpython-3*
+ 
       - uses: actions/upload-artifact@v4
         with:
           name: cadoodle-build123d-portable-${{ matrix.os }}
