@@ -1,0 +1,40 @@
+name: 'Setup'
+inputs:
+  python-version:  # id of input
+    description: 'Python version'
+    required: true
+
+env:
+  UV_INSTALL_DIR: "${GITHUB_WORKSPACE}/uv"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install uv into local working directory
+      shell: bash
+      run: |
+        mkdir uv
+        curl -LsSf https://astral.sh/uv/install.sh | env UV_UNMANAGED_INSTALL="${GITHUB_WORKSPACE}/uv" sh
+        echo $PATH
+        export PATH="${GITHUB_WORKSPACE}/uv:$PATH"
+        echo $PATH
+        chmod +x ${GITHUB_WORKSPACE}/uv/uv
+        uv --version
+
+    - name: Install Requirements
+      shell: bash
+      #TODO: re-test with input python version
+      run: |
+        mkdir python
+        mkdir pyinst
+        export UV_PYTHON_BIN_DIR="`pwd`/python"
+        export UV_PYTHON_INSTALL_DIR="`pwd`/pyinst"
+        echo $PATH
+        export PATH="${GITHUB_WORKSPACE}/uv:$PATH"
+        echo $PATH
+        uv python install 3.12
+        uv venv --relocatable --python 3.12
+        uv pip install .
+        uv pip install build123d ocp_vscode
+        uv pip install git+https://github.com/jdegenstein/nice123d@v0.0.3
+        uv pip install git+https://github.com/GarryBGoode/gggears
