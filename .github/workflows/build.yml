@@ -67,8 +67,8 @@ jobs:
           curl -o vscode.zip -LsSf https://update.code.visualstudio.com/latest/win32-x64-archive/stable
           unzip vscode.zip -d vscode/
           ls -alR
-          vscode/Code.exe --install-extension bernhard-42.ocp-cad-viewer --install-extension ms-python.python --install-extension ms-toolsai.jupyter --install-extension ms-python.black-formatter
-          
+          vscode/Code.exe --install-extension ms-python.python --install-extension ms-toolsai.jupyter --install-extension ms-python.black-formatter
+      # --install-extension bernhard-42.ocp-cad-viewer
       - uses: actions/upload-artifact@v4
         with:
           name: build123d-portable-${{ matrix.os }}
