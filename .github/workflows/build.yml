@@ -11,7 +11,8 @@ jobs:
         # currently ignored by local setup action
         python-version: ["3.12"]
         # os: [macos-15-intel, macos-14, ubuntu-latest, windows-latest]
-        os: [ubuntu-latest, windows-latest]
+        os: [macos-14, ubuntu-latest, windows-latest]
+        # os: [ubuntu-latest, windows-latest]
         # os: [ubuntu-latest]
         # os: [windows-latest]
 
@@ -69,7 +70,28 @@ jobs:
           cp scripts/$MY_SCRIPT ./
           mkdir -p vscode/data/user-data/User/
           cp scripts/settings.json vscode/data/user-data/User/
-      # TODO: add missing mac x64 & arm64 [darwin-universal]
+          
+      - name: macos get VSCode
+        if: runner.os == 'Darwin'
+        shell: bash
+        run: |
+          curl -L -o vscode.zip https://update.code.visualstudio.com/latest/darwin-universal/stable
+          mkdir vscode
+          unzip vscode.zip -d vscode/
+          mkdir -p vscode/code-portable-data
+          
+          VSCODE_CLI="./vscode/Visual Studio Code.app/Contents/Resources/app/bin/code"
+          "$VSCODE_CLI" --install-extension ms-python.python
+          "$VSCODE_CLI" --install-extension ms-toolsai.jupyter
+          "$VSCODE_CLI" --install-extension ms-python.black-formatter
+          "$VSCODE_CLI" --install-extension bernhard-42.ocp-cad-viewer
+          
+          MY_SCRIPT="Start_VSCode.sh"
+          echo "VSCODE_START_SCRIPT=$MY_SCRIPT" >> $GITHUB_ENV
+          cp scripts/$MY_SCRIPT ./
+          
+          mkdir -p vscode/code-portable-data/user-data/User/
+          cp scripts/settings.json vscode/code-portable-data/user-data/User/
 
       - name: windows get VSCode
         if: runner.os == 'Windows'
