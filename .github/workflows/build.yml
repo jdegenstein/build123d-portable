@@ -72,7 +72,7 @@ jobs:
           cp scripts/settings.json vscode/data/user-data/User/
           
       - name: macos get VSCode
-        if: runner.os == 'Darwin'
+        if: runner.os == 'macOS'
         shell: bash
         run: |
           curl -L -o vscode.zip https://update.code.visualstudio.com/latest/darwin-universal/stable
