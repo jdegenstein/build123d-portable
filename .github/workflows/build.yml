@@ -17,7 +17,7 @@ jobs:
 
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: ./.github/actions/setup/
         with:
           python-version: ${{ matrix.python-version }}
@@ -64,6 +64,9 @@ jobs:
           ./vscode/VSCode-linux-x64/bin/code --install-extension ms-toolsai.jupyter
           ./vscode/VSCode-linux-x64/bin/code --install-extension ms-python.black-formatter
           ./vscode/VSCode-linux-x64/bin/code --install-extension bernhard-42.ocp-cad-viewer
+          echo "VSCODE_START_SCRIPT=Start_VSCode.sh" >> $GITHUB_ENV
+          mkdir -p vscode/data/user-data/User/
+          cp scripts/settings.json vscode/data/user-data/User/
       # TODO: add missing mac x64 & arm64 [darwin-universal]
 
       - name: windows get VSCode
@@ -78,8 +81,11 @@ jobs:
           vscode/bin/code.cmd --install-extension ms-toolsai.jupyter
           vscode/bin/code.cmd --install-extension ms-python.black-formatter
           vscode/bin/code.cmd --install-extension bernhard-42.ocp-cad-viewer
-          
-      - uses: actions/upload-artifact@v4
+          echo "VSCODE_START_SCRIPT=Start_VSCode.cmd" >> $GITHUB_ENV
+          mkdir -p vscode/data/user-data/User/
+          cp scripts/settings.json vscode/data/user-data/User/
+
+      - uses: actions/upload-artifact@v6
         with:
           name: build123d-portable-${{ matrix.os }}
           # TODO: make cross-platform compat
@@ -89,3 +95,4 @@ jobs:
             python/
             uv/
             vscode/
+            ${{ env.VSCODE_START_SCRIPT }}
