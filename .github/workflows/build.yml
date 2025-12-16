@@ -65,6 +65,7 @@ jobs:
           ./vscode/VSCode-linux-x64/bin/code --install-extension ms-python.black-formatter
           ./vscode/VSCode-linux-x64/bin/code --install-extension bernhard-42.ocp-cad-viewer
           echo "VSCODE_START_SCRIPT=Start_VSCode.sh" >> $GITHUB_ENV
+          cp scripts/${{ env.VSCODE_START_SCRIPT }} ./
           mkdir -p vscode/data/user-data/User/
           cp scripts/settings.json vscode/data/user-data/User/
       # TODO: add missing mac x64 & arm64 [darwin-universal]
@@ -82,6 +83,7 @@ jobs:
           vscode/bin/code.cmd --install-extension ms-python.black-formatter
           vscode/bin/code.cmd --install-extension bernhard-42.ocp-cad-viewer
           echo "VSCODE_START_SCRIPT=Start_VSCode.cmd" >> $GITHUB_ENV
+          cp scripts/${{ env.VSCODE_START_SCRIPT }} ./
           mkdir -p vscode/data/user-data/User/
           cp scripts/settings.json vscode/data/user-data/User/
 
