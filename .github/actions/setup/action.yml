@@ -32,5 +32,6 @@ runs:
         echo $PATH
         export PATH="${GITHUB_WORKSPACE}/uv:$PATH"
         echo $PATH
-        uv python install 3.12
+        uv python install 3.12.12
+      #pin python version for stability of included scripts
 
