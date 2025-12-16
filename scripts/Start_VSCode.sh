@@ -12,7 +12,7 @@ if [ "$OS" = "Darwin" ]; then
     
     # Path to the Python executable inside your bundle
     # TODO: Update 'cpython-3.12...macos...' to match your actual Mac Python folder name
-    PYTHON_BIN="$BUNDLE_ROOT/pyinst/cpython-3.12.12-aarch64-apple-darwin/bin/python3"
+    PYTHON_BIN="$BUNDLE_ROOT/pyinst/cpython-3.12.12-macos-aarch64-none/bin/python3"
     
     # Path to the VS Code executable
     # MacOS apps are folders. Point to the binary inside the .app bundle.
