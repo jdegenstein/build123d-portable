@@ -6,6 +6,10 @@ on:
       tags:
         - 'v*'
 
+permissions:
+  # needed for later attachment to github release
+  contents: write
+
 jobs:
   build:
     strategy:
