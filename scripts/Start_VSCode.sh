@@ -50,4 +50,14 @@ export PORTABLE_PYTHON_BIN="$PYTHON_BIN"
 
 # 6. Launch VS Code
 # We explicitly set user-data-dir to ensure portability works regardless of folder names
-"$VSCODE_EXEC" "$@" &
+
+if [ "$OS" = "Darwin" ]; then
+    "$VSCODE_EXEC" "$@" &
+    
+elif [ "$OS" = "Linux" ]; then
+    # linux needs the no-sandbox flag to run without manual permissions adjustments
+    # there is technically a security risk here, but this is the best way to achieve 
+    # ease-of-use currently
+    # see https://code.visualstudio.com/docs/editor/portable#_linux for further information
+    "$VSCODE_EXEC" --no-sandbox "$@" &
+fi
