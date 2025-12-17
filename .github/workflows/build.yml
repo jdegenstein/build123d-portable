@@ -76,8 +76,6 @@ jobs:
           ls -alR
           chmod +x vscode/VSCode-linux-x64/code
           chmod +x vscode/VSCode-linux-x64/bin/code
-          sudo chown root vscode/VSCode-linux-x64/chrome-sandbox
-          sudo chmod 4755 vscode/VSCode-linux-x64/chrome-sandbox
           ./vscode/VSCode-linux-x64/bin/code --install-extension ms-python.python
           ./vscode/VSCode-linux-x64/bin/code --install-extension ms-toolsai.jupyter
           ./vscode/VSCode-linux-x64/bin/code --install-extension ms-python.black-formatter
