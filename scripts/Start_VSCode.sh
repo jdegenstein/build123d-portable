@@ -27,7 +27,7 @@ elif [ "$OS" = "Linux" ]; then
     
     # Path to the VS Code executable
     # On Linux, the binary is usually named 'code' inside the 'bin' folder
-    VSCODE_EXEC="$BUNDLE_ROOT/vscode/bin/code"
+    VSCODE_EXEC="$BUNDLE_ROOT/vscode/VSCode-linux-x64/bin/code"
     
 else
     echo "Unsupported Operating System: $OS"
@@ -50,4 +50,4 @@ export PORTABLE_PYTHON_BIN="$PYTHON_BIN"
 
 # 6. Launch VS Code
 # We explicitly set user-data-dir to ensure portability works regardless of folder names
-"$VSCODE_EXEC" --user-data-dir "$BUNDLE_ROOT/vscode/data/user-data" "$@" &
+"$VSCODE_EXEC" "$@" &
