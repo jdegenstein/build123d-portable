@@ -72,10 +72,12 @@ jobs:
           curl -L -o vscode.tar.gz https://update.code.visualstudio.com/latest/linux-x64/stable
           mkdir vscode/
           tar -zxvf vscode.tar.gz -C vscode/
-          mkdir vscode/data
+          mkdir vscode/VSCode-linux-x64/data
           ls -alR
           chmod +x vscode/VSCode-linux-x64/code
           chmod +x vscode/VSCode-linux-x64/bin/code
+          sudo chown root vscode/VSCode-linux-x64/chrome-sandbox
+          sudo chmod 4755 vscode/VSCode-linux-x64/chrome-sandbox
           ./vscode/VSCode-linux-x64/bin/code --install-extension ms-python.python
           ./vscode/VSCode-linux-x64/bin/code --install-extension ms-toolsai.jupyter
           ./vscode/VSCode-linux-x64/bin/code --install-extension ms-python.black-formatter
@@ -84,8 +86,8 @@ jobs:
           echo "VSCODE_START_SCRIPT=$MY_SCRIPT" >> $GITHUB_ENV
           cp scripts/$MY_SCRIPT ./
           chmod +x $MY_SCRIPT
-          mkdir -p vscode/data/user-data/User/
-          cp scripts/settings.json vscode/data/user-data/User/
+          mkdir -p vscode/VSCode-linux-x64/data/user-data/User/
+          cp scripts/settings.json vscode/VSCode-linux-x64/data/user-data/User/
           
       - name: macos get VSCode
         if: runner.os == 'macOS'
