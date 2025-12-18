@@ -1,0 +1,225 @@
+{
+	// build123d CodeCAD speedmodeling snippet by Jern
+	//
+	// Customize as desired for your own needs. This provides:
+	// 1. A file template that reduces the time necessary to "just start coding/modeling"
+	// 2. Shortcuts like "?ebds + TAB" that creates a BuildSketch + extrude block
+	//
+	// recommended to bind "Snippets: Fill file with Snippet" to e.g. CTRL + ALT + N
+	// recommended to bind "Jupyter: Restart Kernel" to e.g. CTRL + ALT + /
+	//
+	// Possible variables are: 
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders. 
+	//
+	// Eliminated legacy replacement for show_all with built-in show_all (recommended ocp_vscode 2.8.9+)
+	"build123d-OCP": {
+		"isFileTemplate": true,
+		// "scope": "python",
+		"prefix": "?template", // this is the shortcut to fill with template
+		"body": [
+			"# %%",
+			"from build123d import *$1", //cursor starts here, press ctrl+enter to run then tab
+			"from ocp_vscode import *",
+			"",
+			"show_clear()",
+			"set_defaults(ortho=True, default_edgecolor=\"#121212\", reset_camera=Camera.KEEP)",
+			"# %%",
+			"",
+			"$0", //cursor ends here, begin file editing as usual, ctrl+enter to run when ready
+			"",
+			"",
+			"",
+			"",
+			"",
+			"set_colormap(ColorMap.golden_ratio())",
+			"# fmt: off",
+			"show_all(",
+			"    classes = [BuildPart, BuildSketch, BuildLine, ],  # comment to show all objects",
+			"    include = [\"\", ],",
+			"    exclude = [\"\", ],",
+			"    show_sketch_local = False,",
+			"    helper_scale = 1,  # controls size of e.g. planes and axes",
+			")  # fmt: on",
+			"",
+		],
+		"description": "build123d python template"
+	},
+	"BuildPart": {
+		"scope": "python",
+		"prefix": "?bdp",
+		"body": [
+			"with BuildPart() as p$1:",
+			"    $0"
+		]
+	},
+	"BuildSketch": {
+		"scope": "python",
+		"prefix": "?bds",
+		"body": [
+			"with BuildSketch($1) as s$2:",
+			"    $0"
+		]
+	},
+	"BuildSketchAndExtrude": {
+		"scope": "python",
+		"prefix": "?ebds",
+		"body": [
+			"with BuildSketch($1) as s$2:",
+			"    $0",
+			"extrude(amount=$3)"
+		]
+	},
+	"BuildLine": {
+		"scope": "python",
+		"prefix": "?bdl",
+		"body": [
+			"with BuildLine($1) as l$2:",
+			"    $0"
+		]
+	},
+	"Locations": {
+		"scope": "python",
+		"prefix": "?loc",
+		"body": [
+			"with Locations(($1)):",
+			"    $0"
+		]
+	},
+	"PolarLocations": {
+		"scope": "python",
+		"prefix": "?ploc",
+		"body": [
+			"with PolarLocations($1):",
+			"    $0"
+		]
+	},
+	"GridLocations": {
+		"scope": "python",
+		"prefix": "?gloc",
+		"body": [
+			"with GridLocations($1):",
+			"    $0"
+		]
+	},
+	"HexLocations": {
+		"scope": "python",
+		"prefix": "?hloc",
+		"body": [
+			"with HexLocations($1):",
+			"    $0"
+		]
+	},
+	"AlignCenter": {
+		"scope": "python",
+		"prefix": "?ac",
+		"body": [
+			"align=(Align.${1|CENTER,MIN,MAX|},Align.${2|CENTER,MIN,MAX|})",
+		]
+	},
+	"Extrude": {
+		"scope": "python",
+		"prefix": "?ext",
+		"body": [
+			"extrude(amount=$0)",
+		]
+	},
+	"Offset": {
+		"scope": "python",
+		"prefix": "?off",
+		"body": [
+			"offset(amount=$0)",
+		]
+	},
+	"Split": {
+		"scope": "python",
+		"prefix": "?spl",
+		"body": [
+			"split(bisect_by=Plane.$0)",
+		]
+	},
+	"Mirror": {
+		"scope": "python",
+		"prefix": "?mirr",
+		"body": [
+			"mirror(about=Plane.$0)",
+		]
+	},
+	"PlaneOffset": {
+		"scope": "python",
+		"prefix": "?opl",
+		"body": [
+			"Plane.${1|XY,XZ,YZ|}.offset(${0:0})",
+		]
+	},
+	"RectangleRounded": {
+		"scope": "python",
+		"prefix": "?rrnd",
+		"body": [
+			"RectangleRounded($1)$0",
+		]
+	},
+	"ModeEnum": {
+		"scope": "python",
+		"prefix": "?mo",
+		"body": [
+			"mode=Mode.${1|SUBTRACT,PRIVATE,INTERSECT,ADD,REPLACE|}",
+		]
+	},
+	"AlgebraExtrude": { // for algebra mode
+		"scope": "python",
+		"prefix": ">ext",
+		"body": [
+			"extrude($1, amount=$0)",
+		]
+	},
+	"AlgebraSplit": { // for algebra mode
+		"scope": "python",
+		"prefix": ">spl",
+		"body": [
+			"split($1, bisect_by=Plane.${2|XY,XZ,YZ|}.offset(${0:0}))",
+		]
+	},
+	"AlgebraChamfer": { // for algebra mode
+		"scope": "python",
+		"prefix": ">cha",
+		"body": [
+			"chamfer($1, $0)",
+		]
+	},
+	"AlgebraMirror": { // for algebra mode
+		"scope": "python",
+		"prefix": ">mirr",
+		"body": [
+			"mirror($1, about=Plane.${2|XY,XZ,YZ|}.offset(${0:0}))",
+		]
+	},
+	"AlgebraPlaneOffsetMult": { // for algebra mode
+		"scope": "python",
+		"prefix": ">opl",
+		"body": [
+			"Plane.${1|XY,XZ,YZ|}.offset(${2:0}) * $0",
+		]
+	},
+	"AlgebraLocChain": { // for algebra mode, experimental
+		"scope": "python",
+		"prefix": ">loc",
+		"body": [
+			"Plane.${1|XY,XZ,YZ|}.offset(${2:0}) * Pos((${3:0},${4:0})) * $0",
+		]
+	},
+	"AlgebraFuseChain": { // for algebra mode
+		"scope": "python",
+		"prefix": ">part",
+		"body": [
+			"p+=$0",
+		]
+	},
+	"AlgebraRectangleRounded": { // for algebra mode
+		"scope": "python",
+		"prefix": ">rrnd",
+		"body": [
+			"RectangleRounded($1)$0",
+		]
+	},
+
+}
