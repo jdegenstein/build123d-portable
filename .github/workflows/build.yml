@@ -71,29 +71,33 @@ jobs:
         run: |
           curl -L -o vscode.tar.gz https://update.code.visualstudio.com/latest/linux-x64/stable
           mkdir vscode/
-          tar -zxvf vscode.tar.gz -C vscode/
+          tar -zxf vscode.tar.gz -C vscode/
           mkdir vscode/VSCode-linux-x64/data
           ls -alR
           chmod +x vscode/VSCode-linux-x64/code
           chmod +x vscode/VSCode-linux-x64/bin/code
+          
           ./vscode/VSCode-linux-x64/bin/code --install-extension ms-python.python
           ./vscode/VSCode-linux-x64/bin/code --install-extension ms-toolsai.jupyter
           ./vscode/VSCode-linux-x64/bin/code --install-extension ms-python.black-formatter
           ./vscode/VSCode-linux-x64/bin/code --install-extension bernhard-42.ocp-cad-viewer
+          
           MY_SCRIPT="Start_VSCode.sh"
           echo "VSCODE_START_SCRIPT=$MY_SCRIPT" >> $GITHUB_ENV
           cp scripts/$MY_SCRIPT ./
           chmod +x $MY_SCRIPT
-          mkdir -p vscode/VSCode-linux-x64/data/user-data/User/
-          cp scripts/settings.json vscode/VSCode-linux-x64/data/user-data/User/
           
+          mkdir -p vscode/VSCode-linux-x64/data/user-data/User/snippets/
+          cp scripts/settings.json vscode/VSCode-linux-x64/data/user-data/User/
+          cp scripts/build123d-OCP.code-snippets vscode/VSCode-linux-x64/data/user-data/User/snippets/
+
       - name: macos get VSCode
         if: runner.os == 'macOS'
         shell: bash
         run: |
           curl -L -o vscode.zip https://update.code.visualstudio.com/latest/darwin-universal/stable
           mkdir vscode
-          unzip vscode.zip -d vscode/
+          unzip -q vscode.zip -d vscode/
           mkdir -p vscode/code-portable-data
           
           VSCODE_CLI="./vscode/Visual Studio Code.app/Contents/Resources/app/bin/code"
@@ -105,16 +109,24 @@ jobs:
           MY_SCRIPT="Start_VSCode.sh"
           echo "VSCODE_START_SCRIPT=$MY_SCRIPT" >> $GITHUB_ENV
           cp scripts/$MY_SCRIPT ./
+          cp scripts/macos-install-vscode.sh ./
           
-          mkdir -p vscode/code-portable-data/user-data/User/
+          mkdir -p vscode/code-portable-data/user-data/User/snippets/
           cp scripts/settings.json vscode/code-portable-data/user-data/User/
+          cp scripts/build123d-OCP.code-snippets vscode/code-portable-data/user-data/User/snippets/
 
+          # now we remove vscode itself (but keep settings and extensions)
+          # for user to later install themselves this is because VSCode is 
+          # signed by Micrsoft, and this will prevent
+          # quarantining issues for the end user
+          rm -rf vscode/"Visual Studio Code.app"
+          
       - name: windows get VSCode
         if: runner.os == 'Windows'
         shell: bash
         run: |
           curl -o vscode.zip -LsSf https://update.code.visualstudio.com/latest/win32-x64-archive/stable
-          unzip vscode.zip -d vscode/
+          unzip -q vscode.zip -d vscode/
           mkdir vscode/data
           ls -alR
           vscode/bin/code.cmd --install-extension ms-python.python
@@ -124,7 +136,7 @@ jobs:
           MY_SCRIPT="Start_VSCode.cmd"
           echo "VSCODE_START_SCRIPT=$MY_SCRIPT" >> $GITHUB_ENV
           cp scripts/$MY_SCRIPT ./
-          mkdir -p vscode/data/user-data/User/
+          mkdir -p vscode/data/user-data/User/snippets/
           cp scripts/settings.json vscode/data/user-data/User/
 
       - uses: actions/upload-artifact@v6
@@ -138,6 +150,7 @@ jobs:
             uv/
             vscode/
             ${{ env.VSCODE_START_SCRIPT }}
+            *.sh
 
       - name: Create Release Archive
         if: startsWith(github.ref, 'refs/tags/v')
@@ -154,14 +167,14 @@ jobs:
           # 3. Compress based on extension
           if [ "${{ matrix.archive_ext }}" == "tar.gz" ]; then
             # Linux: Create .tar.gz
-            tar -czvf "$ASSET_NAME" $FILES_TO_PACK
+            tar -czf "$ASSET_NAME" $FILES_TO_PACK
           else
             # Windows/Mac: Create .zip
             if [ "$RUNNER_OS" == "Windows" ]; then
               7z a -tzip "$ASSET_NAME" $FILES_TO_PACK
             else
-              # MacOS/Linux Zip
-              zip -r -q "$ASSET_NAME" $FILES_TO_PACK
+              # MacOS Zip with extra vscode install script
+              zip -r -q "$ASSET_NAME" $FILES_TO_PACK macos-install-vscode.sh
             fi
           fi
 
