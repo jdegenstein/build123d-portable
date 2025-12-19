@@ -129,15 +129,19 @@ jobs:
           unzip -q vscode.zip -d vscode/
           mkdir vscode/data
           ls -alR
+          
           vscode/bin/code.cmd --install-extension ms-python.python
           vscode/bin/code.cmd --install-extension ms-toolsai.jupyter
           vscode/bin/code.cmd --install-extension ms-python.black-formatter
           vscode/bin/code.cmd --install-extension bernhard-42.ocp-cad-viewer
+          
           MY_SCRIPT="Start_VSCode.cmd"
           echo "VSCODE_START_SCRIPT=$MY_SCRIPT" >> $GITHUB_ENV
           cp scripts/$MY_SCRIPT ./
+          
           mkdir -p vscode/data/user-data/User/snippets/
           cp scripts/settings.json vscode/data/user-data/User/
+          cp scripts/build123d-OCP.code-snippets vscode/data/user-data/User/snippets/
 
       - uses: actions/upload-artifact@v6
         with:
