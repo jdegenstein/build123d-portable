@@ -227,7 +227,7 @@ jobs:
               7z a -tzip "$ASSET_NAME" $FILES_TO_PACK
             else
               # MacOS Zip with extra vscode install script
-              FILES_TO_PACK = "${FILES_TO_PACK} macos-install-vscode.sh"
+              FILES_TO_PACK="${FILES_TO_PACK} macos-install-vscode.sh"
               zip -r -q "$ASSET_NAME" $FILES_TO_PACK
             fi
           fi
