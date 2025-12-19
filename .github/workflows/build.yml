@@ -16,20 +16,29 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-14, windows-latest]
-        # currently ignored by local setup action
+        # python-version currently ignored by local setup action
         python-version: ["3.12"]
         include:
           - os: ubuntu-latest
             platform_slug: linux-x86_64
             archive_ext: tar.gz
+            VSCODE_CLI_BIN: ./vscode/VSCode-linux-x64/bin/code
+            VSCODE_USER_DATA: vscode/VSCode-linux-x64/data/user-data/User
+            VSCODE_START_SCRIPT: Start_VSCode.sh
 
           - os: macos-14
             platform_slug: macos-arm64
             archive_ext: zip
+            VSCODE_CLI_BIN: ./vscode/Visual Studio Code.app/Contents/Resources/app/bin/code
+            VSCODE_USER_DATA: vscode/code-portable-data/user-data/User
+            VSCODE_START_SCRIPT: Start_VSCode.sh
 
           - os: windows-latest
             platform_slug: windows-x86_64
             archive_ext: zip
+            VSCODE_CLI_BIN: vscode/bin/code.cmd
+            VSCODE_USER_DATA: vscode/data/user-data/User
+            VSCODE_START_SCRIPT: Start_VSCode.cmd
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -70,78 +79,120 @@ jobs:
         shell: bash
         run: |
           curl -L -o vscode.tar.gz https://update.code.visualstudio.com/latest/linux-x64/stable
-          mkdir vscode/
+          mkdir -p ${{ matrix.VSCODE_USER_DATA }}/snippets/
           tar -zxf vscode.tar.gz -C vscode/
-          mkdir vscode/VSCode-linux-x64/data
-          ls -alR
-          chmod +x vscode/VSCode-linux-x64/code
-          chmod +x vscode/VSCode-linux-x64/bin/code
+          chmod +x ${{ matrix.VSCODE_CLI_BIN }}
           
-          ./vscode/VSCode-linux-x64/bin/code --install-extension ms-python.python
-          ./vscode/VSCode-linux-x64/bin/code --install-extension ms-toolsai.jupyter
-          ./vscode/VSCode-linux-x64/bin/code --install-extension ms-python.black-formatter
-          ./vscode/VSCode-linux-x64/bin/code --install-extension bernhard-42.ocp-cad-viewer
+          ${{ matrix.VSCODE_CLI_BIN }} --install-extension ms-python.python
+          ${{ matrix.VSCODE_CLI_BIN }} --install-extension ms-toolsai.jupyter
+          ${{ matrix.VSCODE_CLI_BIN }} --install-extension ms-python.black-formatter
+          ${{ matrix.VSCODE_CLI_BIN }} --install-extension bernhard-42.ocp-cad-viewer
           
-          MY_SCRIPT="Start_VSCode.sh"
-          echo "VSCODE_START_SCRIPT=$MY_SCRIPT" >> $GITHUB_ENV
-          cp scripts/$MY_SCRIPT ./
-          chmod +x $MY_SCRIPT
+          cp scripts/${{ matrix.VSCODE_START_SCRIPT }} ./
+          chmod +x ${{ matrix.VSCODE_START_SCRIPT }}
           
-          mkdir -p vscode/VSCode-linux-x64/data/user-data/User/snippets/
-          cp scripts/settings.json vscode/VSCode-linux-x64/data/user-data/User/
-          cp scripts/build123d-OCP.code-snippets vscode/VSCode-linux-x64/data/user-data/User/snippets/
+          cp scripts/settings.json ${{ matrix.VSCODE_USER_DATA }}/
+          cp scripts/build123d-OCP.code-snippets ${{ matrix.VSCODE_USER_DATA }}/snippets/
 
       - name: macos get VSCode
         if: runner.os == 'macOS'
         shell: bash
         run: |
           curl -L -o vscode.zip https://update.code.visualstudio.com/latest/darwin-universal/stable
-          mkdir vscode
+          mkdir -p ${{ matrix.VSCODE_USER_DATA }}/snippets/
           unzip -q vscode.zip -d vscode/
-          mkdir -p vscode/code-portable-data
           
-          VSCODE_CLI="./vscode/Visual Studio Code.app/Contents/Resources/app/bin/code"
-          "$VSCODE_CLI" --install-extension ms-python.python
-          "$VSCODE_CLI" --install-extension ms-toolsai.jupyter
-          "$VSCODE_CLI" --install-extension ms-python.black-formatter
-          "$VSCODE_CLI" --install-extension bernhard-42.ocp-cad-viewer
+          ${{ matrix.VSCODE_CLI_BIN }} --install-extension ms-python.python
+          ${{ matrix.VSCODE_CLI_BIN }} --install-extension ms-toolsai.jupyter
+          ${{ matrix.VSCODE_CLI_BIN }} --install-extension ms-python.black-formatter
+          ${{ matrix.VSCODE_CLI_BIN }} --install-extension bernhard-42.ocp-cad-viewer
           
-          MY_SCRIPT="Start_VSCode.sh"
-          echo "VSCODE_START_SCRIPT=$MY_SCRIPT" >> $GITHUB_ENV
-          cp scripts/$MY_SCRIPT ./
-          cp scripts/macos-install-vscode.sh ./
+          cp scripts/${{ matrix.VSCODE_START_SCRIPT }} ./
           
-          mkdir -p vscode/code-portable-data/user-data/User/snippets/
-          cp scripts/settings.json vscode/code-portable-data/user-data/User/
-          cp scripts/build123d-OCP.code-snippets vscode/code-portable-data/user-data/User/snippets/
+          cp scripts/settings.json ${{ matrix.VSCODE_USER_DATA }}/
+          cp scripts/build123d-OCP.code-snippets ${{ matrix.VSCODE_USER_DATA }}/snippets/
 
           # now we remove vscode itself (but keep settings and extensions)
           # for user to later install themselves this is because VSCode is 
           # signed by Micrsoft, and this will prevent
           # quarantining issues for the end user
           rm -rf vscode/"Visual Studio Code.app"
-          
+
       - name: windows get VSCode
         if: runner.os == 'Windows'
         shell: bash
         run: |
           curl -o vscode.zip -LsSf https://update.code.visualstudio.com/latest/win32-x64-archive/stable
+          mkdir -p ${{ matrix.VSCODE_USER_DATA }}/snippets/
           unzip -q vscode.zip -d vscode/
-          mkdir vscode/data
-          ls -alR
           
-          vscode/bin/code.cmd --install-extension ms-python.python
-          vscode/bin/code.cmd --install-extension ms-toolsai.jupyter
-          vscode/bin/code.cmd --install-extension ms-python.black-formatter
-          vscode/bin/code.cmd --install-extension bernhard-42.ocp-cad-viewer
+          ${{ matrix.VSCODE_CLI_BIN }} --install-extension ms-python.python
+          ${{ matrix.VSCODE_CLI_BIN }} --install-extension ms-toolsai.jupyter
+          ${{ matrix.VSCODE_CLI_BIN }} --install-extension ms-python.black-formatter
+          ${{ matrix.VSCODE_CLI_BIN }} --install-extension bernhard-42.ocp-cad-viewer
           
-          MY_SCRIPT="Start_VSCode.cmd"
-          echo "VSCODE_START_SCRIPT=$MY_SCRIPT" >> $GITHUB_ENV
-          cp scripts/$MY_SCRIPT ./
+          cp scripts/${{ matrix.VSCODE_START_SCRIPT }} ./
           
-          mkdir -p vscode/data/user-data/User/snippets/
-          cp scripts/settings.json vscode/data/user-data/User/
-          cp scripts/build123d-OCP.code-snippets vscode/data/user-data/User/snippets/
+          cp scripts/settings.json ${{ matrix.VSCODE_USER_DATA }}/
+          cp scripts/build123d-OCP.code-snippets ${{ matrix.VSCODE_USER_DATA }}/snippets/
+
+      - name: Generate Version Report
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          # 1. Define Paths to your local binaries
+          # Note: We use the exact paths created in your previous steps
+          PYTHON_BIN="./pyinst/cpython/bin/python3"
+          
+          # 2. Get Standalone Python Version
+          # Output: "Python 3.12.12" -> Extract "3.12.12"
+          PY_RAW=$($PYTHON_BIN --version)
+          PY_VER=${PY_RAW#Python }
+
+          # 3. Get Python Package Versions (using pip show)
+          # We grab the line "Version: x.y.z" and cut out the number
+          B123_VER=$($PYTHON_BIN -m pip show build123d | grep "^Version:" | cut -d ' ' -f 2)
+          GGGEARS_VER=$($PYTHON_BIN -m pip show gggears | grep "^Version:" | cut -d ' ' -f 2)
+
+          # 4. Get VSCode Version
+          # "code --version" outputs 3 lines: version, commit, arch. We take line 1.
+          CODE_VER=$(${{ matrix.VSCODE_CLI_BIN }} --version | head -n 1)
+
+          # 5. Get Extension Versions
+          # "code --list-extensions --show-versions" returns "publisher.ext@version"
+          # We capture the output once to avoid relaunching VSCode multiple times
+          EXTS_OUT=$(${{ matrix.VSCODE_CLI_BIN }} --list-extensions --show-versions)
+          
+          # Parse specific versions
+          OCP_VER=$(echo "$EXTS_OUT" | grep "bernhard-42.ocp-cad-viewer" | cut -d '@' -f 2)
+          MSPY_VER=$(echo "$EXTS_OUT" | grep "ms-python.python@" | cut -d '@' -f 2)
+          JUP_VER=$(echo "$EXTS_OUT" | grep "ms-toolsai.jupyter@" | cut -d '@' -f 2)
+          BLK_VER=$(echo "$EXTS_OUT" | grep "ms-python.black-formatter" | cut -d '@' -f 2)
+
+          # 6. Construct and Print the Release Note String
+          # We define a multiline string variable for clarity
+          read -r -d '' RELEASE_NOTE_BLOCK << EOM
+          - Standalone Python $PY_VER
+          - build123d v$B123_VER
+          - gggears v$GGGEARS_VER
+          - VSCode v$CODE_VER -- with VSCode extensions:
+            - OCP CAD Viewer v$OCP_VER
+            - Microsoft Python v$MSPY_VER
+            - Microsoft Jupyter v$JUP_VER
+            - Microsoft Black Formatter v$BLK_VER
+          EOM
+
+          # Print to Console Logs
+          echo "---------------------------------------------------"
+          echo "GENERATED RELEASE NOTES:"
+          echo "$RELEASE_NOTE_BLOCK"
+          echo "---------------------------------------------------"
+
+          # Save to GitHub Step Summary (Visible in Actions UI)
+          echo "### Component Versions" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "$RELEASE_NOTE_BLOCK" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
 
       - uses: actions/upload-artifact@v6
         with:
@@ -153,7 +204,7 @@ jobs:
             python/
             uv/
             vscode/
-            ${{ env.VSCODE_START_SCRIPT }}
+            ${{ matrix.VSCODE_START_SCRIPT }}
             *.sh
 
       - name: Create Release Archive
@@ -178,13 +229,14 @@ jobs:
               7z a -tzip "$ASSET_NAME" $FILES_TO_PACK
             else
               # MacOS Zip with extra vscode install script
-              zip -r -q "$ASSET_NAME" $FILES_TO_PACK macos-install-vscode.sh
+              FILES_TO_PACK = "${FILES_TO_PACK} macos-install-vscode.sh"
+              zip -r -q "$ASSET_NAME" $FILES_TO_PACK
             fi
           fi
 
       - name: Upload Binary to Release
         if: startsWith(github.ref, 'refs/tags/v')
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           files: ${{ env.RELEASE_ASSET_FILE }}
         env:
