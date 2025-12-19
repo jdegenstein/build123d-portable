@@ -1,9 +1,17 @@
 {
-    "python.defaultInterpreterPath": "${env:PORTABLE_PYTHON_BIN}"
+    "python.defaultInterpreterPath": "${env:PORTABLE_PYTHON_BIN}",
     "terminal.integrated.env.windows": {
         // Prepend Python DIR and Scripts DIR before system PATH
         "PATH": "${env:PORTABLE_PYTHON_DIR};${env:PORTABLE_SCRIPTS_DIR};${env:PATH}"
     },
+    "terminal.integrated.profiles.windows": {
+        "PowerShell": {
+            "source": "PowerShell",
+            "args": ["-NoProfile"]
+        }
+    },
+    // doing this to help override the possibility of conda on a user system
+    "terminal.integrated.defaultProfile.windows": "PowerShell",
     "terminal.integrated.env.osx": {
         // Prepend Python DIR before system PATH
         "PATH": "${env:PORTABLE_PYTHON_DIR}:${env:PATH}"
@@ -11,5 +19,5 @@
     "terminal.integrated.env.linux": {
         // Prepend Python DIR before system PATH
         "PATH": "${env:PORTABLE_PYTHON_DIR}:${env:PATH}"
-    }
+    },
 }
