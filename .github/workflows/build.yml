@@ -25,6 +25,7 @@ jobs:
             VSCODE_CLI_BIN: ./vscode/VSCode-linux-x64/bin/code
             VSCODE_USER_DATA: vscode/VSCode-linux-x64/data/user-data/User
             VSCODE_START_SCRIPT: Start_VSCode.sh
+            PYTHON_BIN: ./pyinst/cpython-3.12.12-linux-x86_64-gnu/bin/python3
 
           - os: macos-14
             platform_slug: macos-arm64
@@ -102,10 +103,10 @@ jobs:
           mkdir -p ${{ matrix.VSCODE_USER_DATA }}/snippets/
           unzip -q vscode.zip -d vscode/
           
-          ${{ matrix.VSCODE_CLI_BIN }} --install-extension ms-python.python
-          ${{ matrix.VSCODE_CLI_BIN }} --install-extension ms-toolsai.jupyter
-          ${{ matrix.VSCODE_CLI_BIN }} --install-extension ms-python.black-formatter
-          ${{ matrix.VSCODE_CLI_BIN }} --install-extension bernhard-42.ocp-cad-viewer
+          "${{ matrix.VSCODE_CLI_BIN }}" --install-extension ms-python.python
+          "${{ matrix.VSCODE_CLI_BIN }}" --install-extension ms-toolsai.jupyter
+          "${{ matrix.VSCODE_CLI_BIN }}" --install-extension ms-python.black-formatter
+          "${{ matrix.VSCODE_CLI_BIN }}" --install-extension bernhard-42.ocp-cad-viewer
           
           cp scripts/${{ matrix.VSCODE_START_SCRIPT }} ./
           
@@ -142,7 +143,7 @@ jobs:
         run: |
           # 1. Define Paths to your local binaries
           # Note: We use the exact paths created in your previous steps
-          PYTHON_BIN="./pyinst/cpython/bin/python3"
+          PYTHON_BIN=${{ matrix.PYTHON_BIN }}
           
           # 2. Get Standalone Python Version
           # Output: "Python 3.12.12" -> Extract "3.12.12"
