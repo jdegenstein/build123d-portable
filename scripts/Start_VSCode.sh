@@ -17,6 +17,8 @@ if [ "$OS" = "Darwin" ]; then
     # Path to the VS Code executable
     # MacOS apps are folders. Point to the binary inside the .app bundle.
     VSCODE_EXEC="$BUNDLE_ROOT/vscode/Visual Studio Code.app/Contents/MacOS/Electron"
+
+    export PORTABLE_PYTHON_DIR="$(dirname "$PYTHON_BIN")"
     
 elif [ "$OS" = "Linux" ]; then
     # --- LINUX CONFIGURATION ---
@@ -28,6 +30,8 @@ elif [ "$OS" = "Linux" ]; then
     # Path to the VS Code executable
     # On Linux, the binary is usually named 'code' inside the 'bin' folder
     VSCODE_EXEC="$BUNDLE_ROOT/vscode/VSCode-linux-x64/bin/code"
+
+    export PORTABLE_PYTHON_DIR="$(dirname "$PYTHON_BIN")"
     
 else
     echo "Unsupported Operating System: $OS"
@@ -48,7 +52,10 @@ fi
 # 5. Export the variable for VS Code settings
 export PORTABLE_PYTHON_BIN="$PYTHON_BIN"
 
-# 6. Launch VS Code
+# 6. Export PATH with portable python directory prepended
+export PATH="$PORTABLE_PYTHON_DIR:$PATH"
+
+# 7. Launch VS Code
 # We explicitly set user-data-dir to ensure portability works regardless of folder names
 
 if [ "$OS" = "Darwin" ]; then
