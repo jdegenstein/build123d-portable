@@ -142,37 +142,34 @@ jobs:
         shell: bash
         run: |
           # 1. Define Paths to your local binaries
-          # Note: We use the exact paths created in your previous steps
-          PYTHON_BIN=${{ matrix.PYTHON_BIN }}
+          # We quote these to handle potential spaces in paths
+          PYTHON_BIN="${{ matrix.PYTHON_BIN }}"
+          VSCODE_BIN="${{ matrix.VSCODE_CLI_BIN }}"
           
           # 2. Get Standalone Python Version
-          # Output: "Python 3.12.12" -> Extract "3.12.12"
           PY_RAW=$($PYTHON_BIN --version)
           PY_VER=${PY_RAW#Python }
 
-          # 3. Get Python Package Versions (using pip show)
-          # We grab the line "Version: x.y.z" and cut out the number
-          B123_VER=$($PYTHON_BIN -m pip show build123d | grep "^Version:" | cut -d ' ' -f 2)
-          GGGEARS_VER=$($PYTHON_BIN -m pip show gggears | grep "^Version:" | cut -d ' ' -f 2)
+          # 3. Get Python Package Versions
+          # Added "|| echo Unknown" to prevent crash if grep finds nothing
+          B123_VER=$($PYTHON_BIN -m pip show build123d | grep "^Version:" | cut -d ' ' -f 2 || echo "Unknown")
+          GGGEARS_VER=$($PYTHON_BIN -m pip show gggears | grep "^Version:" | cut -d ' ' -f 2 || echo "Unknown")
 
           # 4. Get VSCode Version
-          # "code --version" outputs 3 lines: version, commit, arch. We take line 1.
-          CODE_VER=$(${{ matrix.VSCODE_CLI_BIN }} --version | head -n 1)
+          # Quoted "$VSCODE_BIN" to handle "Visual Studio Code" spaces
+          CODE_VER=$("$VSCODE_BIN" --version | head -n 1)
 
           # 5. Get Extension Versions
-          # "code --list-extensions --show-versions" returns "publisher.ext@version"
-          # We capture the output once to avoid relaunching VSCode multiple times
-          EXTS_OUT=$(${{ matrix.VSCODE_CLI_BIN }} --list-extensions --show-versions)
+          EXTS_OUT=$("$VSCODE_BIN" --list-extensions --show-versions)
           
-          # Parse specific versions
-          OCP_VER=$(echo "$EXTS_OUT" | grep "bernhard-42.ocp-cad-viewer" | cut -d '@' -f 2)
-          MSPY_VER=$(echo "$EXTS_OUT" | grep "ms-python.python@" | cut -d '@' -f 2)
-          JUP_VER=$(echo "$EXTS_OUT" | grep "ms-toolsai.jupyter@" | cut -d '@' -f 2)
-          BLK_VER=$(echo "$EXTS_OUT" | grep "ms-python.black-formatter" | cut -d '@' -f 2)
+          OCP_VER=$(echo "$EXTS_OUT" | grep "bernhard-42.ocp-cad-viewer" | cut -d '@' -f 2 || echo "Unknown")
+          MSPY_VER=$(echo "$EXTS_OUT" | grep "ms-python.python@" | cut -d '@' -f 2 || echo "Unknown")
+          JUP_VER=$(echo "$EXTS_OUT" | grep "ms-toolsai.jupyter@" | cut -d '@' -f 2 || echo "Unknown")
+          BLK_VER=$(echo "$EXTS_OUT" | grep "ms-python.black-formatter" | cut -d '@' -f 2 || echo "Unknown")
 
           # 6. Construct and Print the Release Note String
-          # We define a multiline string variable for clarity
-          read -r -d '' RELEASE_NOTE_BLOCK << EOM
+          # Added "|| true" because 'read' returns 1 when it hits EOF without a null byte
+          read -r -d '' RELEASE_NOTE_BLOCK << EOM || true
           - Standalone Python $PY_VER
           - build123d v$B123_VER
           - gggears v$GGGEARS_VER
@@ -189,7 +186,7 @@ jobs:
           echo "$RELEASE_NOTE_BLOCK"
           echo "---------------------------------------------------"
 
-          # Save to GitHub Step Summary (Visible in Actions UI)
+          # Save to GitHub Step Summary
           echo "### Component Versions" >> $GITHUB_STEP_SUMMARY
           echo '```' >> $GITHUB_STEP_SUMMARY
           echo "$RELEASE_NOTE_BLOCK" >> $GITHUB_STEP_SUMMARY
