@@ -29,6 +29,7 @@ echo "The following commands will be executed:"
 echo "  xattr -dr com.apple.quarantine $BUNDLE_ROOT/pyinst"
 echo "  xattr -dr com.apple.quarantine $BUNDLE_ROOT/python"
 echo "  xattr -dr com.apple.quarantine $BUNDLE_ROOT/uv"
+echo "  xattr -dr com.apple.quarantine $BUNDLE_ROOT/vscode/code-portable-data"
 echo ""
 read -p "Do you want to remove the quarantine flag from these folders? (y/n): " quarantine_choice
 
@@ -44,6 +45,7 @@ echo "Removing quarantine flags..."
 xattr -dr com.apple.quarantine $BUNDLE_ROOT/pyinst
 xattr -dr com.apple.quarantine $BUNDLE_ROOT/python
 xattr -dr com.apple.quarantine $BUNDLE_ROOT/uv
+xattr -dr com.apple.quarantine $BUNDLE_ROOT/vscode/code-portable-data
 
 echo ""
 echo "Done! VS Code and tools are ready to use."    
