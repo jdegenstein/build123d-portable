@@ -1,5 +1,6 @@
 {
     "python.defaultInterpreterPath": "${env:PORTABLE_PYTHON_BIN}",
+    // --------------------- WINDOWS ---------------------------
     "terminal.integrated.env.windows": {
         // Prepend Python DIR and Scripts DIR before system PATH
         "PATH": "${env:PORTABLE_PYTHON_DIR};${env:PORTABLE_SCRIPTS_DIR};${env:PATH}"
@@ -12,10 +13,26 @@
     },
     // doing this to help override the possibility of conda on a user system
     "terminal.integrated.defaultProfile.windows": "PowerShell",
+    
+    // --------------------- MACOS ---------------------------
+    // 1. Create a "Portable" profile for macos that does NOT use "-l" (login)
+    "terminal.integrated.profiles.osx": {
+        "PortableZsh": {
+            "path": "/bin/zsh",
+            "args": [],  // Empty args prevents loading /etc/profile logic
+            "icon": "terminal"
+        }
+    },
+    
+    // 2. Set this as the default for macOS
+    "terminal.integrated.defaultProfile.osx": "PortableZsh",
+    
     "terminal.integrated.env.osx": {
         // Prepend Python DIR before system PATH
         "PATH": "${env:PORTABLE_PYTHON_DIR}:${env:PATH}"
     },
+
+    // --------------------- LINUX ---------------------------
     "terminal.integrated.env.linux": {
         // Prepend Python DIR before system PATH
         "PATH": "${env:PORTABLE_PYTHON_DIR}:${env:PATH}"
