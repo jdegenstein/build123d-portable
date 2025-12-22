@@ -47,6 +47,29 @@ jobs:
       - uses: ./.github/actions/setup/
         with:
           python-version: ${{ matrix.python-version }}
+      
+      # setup golang if on Linux for launcher creation
+      - uses: actions/setup-go@v6
+        if: runner.os == 'Linux'
+        with:
+          go-version: '1.23'
+
+      - name: Build Linux Launcher with Golang
+        if: runner.os == 'Linux'
+        run: |
+          # 1. Enter scripts directory
+          cd scripts
+          
+          # 2. Build the binary
+          # -ldflags "-s -w" strips debug info to make the binary smaller
+          # CGO_ENABLED=0 ensures a static binary (works on ALL Linux distros)
+          CGO_ENABLED=0 go build -ldflags "-s -w" -o ../Start_VSCode launcher.go
+          
+          # 3. Go back and verify
+          cd ..
+          chmod +x Start_VSCode
+          ls -l Start_VSCode
+
       - name: shell
         shell: bash
         #TODO: cleanup and harmonization
@@ -205,6 +228,7 @@ jobs:
             vscode/
             ${{ matrix.VSCODE_START_SCRIPT }}
             *.sh
+            Start_VSCode
 
       - name: Create Release Archive
         if: startsWith(github.ref, 'refs/tags/v')
@@ -216,7 +240,7 @@ jobs:
           
           # 2. Define what to include (Folders + Launcher Scripts)
           # Using a wildcard for the script ensures we catch .cmd or .sh depending on what exists
-          FILES_TO_PACK="uv pyinst python vscode Start_VSCode.*"
+          FILES_TO_PACK="uv pyinst python vscode Start_VSCode*"
 
           # 3. Compress based on extension
           if [ "${{ matrix.archive_ext }}" == "tar.gz" ]; then
