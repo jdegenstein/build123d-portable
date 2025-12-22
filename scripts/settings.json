@@ -1,5 +1,6 @@
 {
     "python.defaultInterpreterPath": "${env:PORTABLE_PYTHON_BIN}",
+    "OcpCadViewer.view.theme": "dark",
     // --------------------- WINDOWS ---------------------------
     "terminal.integrated.env.windows": {
         // Prepend Python DIR and Scripts DIR before system PATH
