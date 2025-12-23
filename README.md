@@ -15,12 +15,12 @@ Generally this project will be made available for all platforms for which the ab
 ## Installation (Windows / Linux)
 1. Download the latest release for your OS from [releases](https://github.com/jdegenstein/build123d-portable/releases)
 2. Extract the folder
-3. Run the launcher script `Start_VSCode.*`
+3. Double click the launcher `Start_VSCode.cmd` (Windows) or `Start_VSCode` (Linux)
 
 ## Installation (MacOS)
 1. Download the latest release for your OS from [releases](https://github.com/jdegenstein/build123d-portable/releases)
 2. Unzip the folder
-3. Run the `macos-install-vscode.sh` script which will unquarantine files and download and extract VSCode. (NOTE: This is necessary because it helps ensure the signed VSCode app is accepted by MacOS gatekeeper)
+3. Run the `macos-install-vscode.sh` script which will unquarantine files and download and extract VSCode. (NOTE: This is necessary because it helps ensure the Microsoft signed VSCode app is accepted by MacOS gatekeeper)
 5. Run the launcher script `Start_VSCode.sh`
 
 ## Screenshot
