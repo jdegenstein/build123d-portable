@@ -108,7 +108,7 @@ jobs:
           chmod +x ${{ matrix.VSCODE_CLI_BIN }}
           
           ${{ matrix.VSCODE_CLI_BIN }} --install-extension ms-python.python
-          ${{ matrix.VSCODE_CLI_BIN }} --install-extension ms-toolsai.jupyter
+          ${{ matrix.VSCODE_CLI_BIN }} --install-extension bernhard-42.vscode-jupyter-console
           ${{ matrix.VSCODE_CLI_BIN }} --install-extension ms-python.black-formatter
           ${{ matrix.VSCODE_CLI_BIN }} --install-extension bernhard-42.ocp-cad-viewer
           
@@ -127,7 +127,7 @@ jobs:
           unzip -q vscode.zip -d vscode/
           
           "${{ matrix.VSCODE_CLI_BIN }}" --install-extension ms-python.python
-          "${{ matrix.VSCODE_CLI_BIN }}" --install-extension ms-toolsai.jupyter
+          "${{ matrix.VSCODE_CLI_BIN }}" --install-extension bernhard-42.vscode-jupyter-console
           "${{ matrix.VSCODE_CLI_BIN }}" --install-extension ms-python.black-formatter
           "${{ matrix.VSCODE_CLI_BIN }}" --install-extension bernhard-42.ocp-cad-viewer
           
@@ -152,7 +152,7 @@ jobs:
           unzip -q vscode.zip -d vscode/
           
           ${{ matrix.VSCODE_CLI_BIN }} --install-extension ms-python.python
-          ${{ matrix.VSCODE_CLI_BIN }} --install-extension ms-toolsai.jupyter
+          ${{ matrix.VSCODE_CLI_BIN }} --install-extension bernhard-42.vscode-jupyter-console
           ${{ matrix.VSCODE_CLI_BIN }} --install-extension ms-python.black-formatter
           ${{ matrix.VSCODE_CLI_BIN }} --install-extension bernhard-42.ocp-cad-viewer
           
@@ -188,7 +188,7 @@ jobs:
           
           OCP_VER=$(echo "$EXTS_OUT" | grep "bernhard-42.ocp-cad-viewer" | cut -d '@' -f 2 || echo "Unknown")
           MSPY_VER=$(echo "$EXTS_OUT" | grep "ms-python.python@" | cut -d '@' -f 2 || echo "Unknown")
-          JUP_VER=$(echo "$EXTS_OUT" | grep "ms-toolsai.jupyter@" | cut -d '@' -f 2 || echo "Unknown")
+          JUP_VER=$(echo "$EXTS_OUT" | grep "bernhard-42.vscode-jupyter-console@" | cut -d '@' -f 2 || echo "Unknown")
           BLK_VER=$(echo "$EXTS_OUT" | grep "ms-python.black-formatter" | cut -d '@' -f 2 || echo "Unknown")
 
           # 6. Construct and Print the Release Note String
@@ -200,7 +200,7 @@ jobs:
           - VSCode v$CODE_VER -- with VSCode extensions:
             - OCP CAD Viewer v$OCP_VER
             - Microsoft Python v$MSPY_VER
-            - Microsoft Jupyter v$JUP_VER
+            - Jupyter Console v$JUP_VER
             - Microsoft Black Formatter v$BLK_VER
           EOM
 
