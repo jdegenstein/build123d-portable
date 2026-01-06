@@ -1,5 +1,5 @@
 {
-    "python.defaultInterpreterPath": "${env:PORTABLE_PYTHON_BIN}",
+    "python.defaultInterpreterPath": "python",
     "OcpCadViewer.view.theme": "dark",
     // --------------------- WINDOWS ---------------------------
     "terminal.integrated.env.windows": {
