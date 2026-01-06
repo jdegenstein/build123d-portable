@@ -88,7 +88,7 @@ jobs:
         run: |
           export PATH="${GITHUB_WORKSPACE}/uv:$PATH"
           rm ./pyinst/cpython-3.*/lib/python3.*/EXTERNALLY-MANAGED
-          uv pip install build123d ocp_vscode jupyter_console git+https://github.com/GarryBGoode/py_gearworks --python ./pyinst/cpython-3*
+          uv pip install build123d ocp_vscode jupyter jupyter_console git+https://github.com/GarryBGoode/py_gearworks --python ./pyinst/cpython-3*
 
       - name: windows install python libs
         if: runner.os == 'Windows'
@@ -96,7 +96,7 @@ jobs:
         run: |
           export PATH="${GITHUB_WORKSPACE}/uv:$PATH"
           rm ./pyinst/cpython-3.*/Lib/EXTERNALLY-MANAGED
-          uv pip install build123d ocp_vscode jupyter_console git+https://github.com/GarryBGoode/py_gearworks --python ./pyinst/cpython-3*
+          uv pip install build123d ocp_vscode jupyter jupyter_console git+https://github.com/GarryBGoode/py_gearworks --python ./pyinst/cpython-3*
 
       - name: linux get VSCode
         if: runner.os == 'Linux'
