@@ -38,4 +38,10 @@
         // Prepend Python DIR before system PATH
         "PATH": "${env:PORTABLE_PYTHON_DIR}:${env:PATH}"
     },
+
+    // --------------------- FORMATTING ---------------------------
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true
+    }
 }
