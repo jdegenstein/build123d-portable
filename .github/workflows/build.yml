@@ -52,7 +52,7 @@ jobs:
       - uses: actions/setup-go@v6
         if: runner.os == 'Linux'
         with:
-          go-version: '1.23'
+          go-version: '1.25'
 
       - name: Build Linux Launcher with Golang
         if: runner.os == 'Linux'
@@ -88,7 +88,7 @@ jobs:
         run: |
           export PATH="${GITHUB_WORKSPACE}/uv:$PATH"
           rm ./pyinst/cpython-3.*/lib/python3.*/EXTERNALLY-MANAGED
-          uv pip install build123d ocp_vscode git+https://github.com/GarryBGoode/gggears --python ./pyinst/cpython-3*
+          uv pip install build123d ocp_vscode git+https://github.com/GarryBGoode/py_gearworks --python ./pyinst/cpython-3*
 
       - name: windows install python libs
         if: runner.os == 'Windows'
@@ -96,7 +96,7 @@ jobs:
         run: |
           export PATH="${GITHUB_WORKSPACE}/uv:$PATH"
           rm ./pyinst/cpython-3.*/Lib/EXTERNALLY-MANAGED
-          uv pip install build123d ocp_vscode git+https://github.com/GarryBGoode/gggears --python ./pyinst/cpython-3*
+          uv pip install build123d ocp_vscode git+https://github.com/GarryBGoode/py_gearworks --python ./pyinst/cpython-3*
 
       - name: linux get VSCode
         if: runner.os == 'Linux'
@@ -177,7 +177,7 @@ jobs:
           # 3. Get Python Package Versions
           # Added "|| echo Unknown" to prevent crash if grep finds nothing
           B123_VER=$($PYTHON_BIN -m pip show build123d | grep "^Version:" | cut -d ' ' -f 2 || echo "Unknown")
-          GGGEARS_VER=$($PYTHON_BIN -m pip show gggears | grep "^Version:" | cut -d ' ' -f 2 || echo "Unknown")
+          PYGEARS_VER=$($PYTHON_BIN -m pip show py_gearworks | grep "^Version:" | cut -d ' ' -f 2 || echo "Unknown")
 
           # 4. Get VSCode Version
           # Quoted "$VSCODE_BIN" to handle "Visual Studio Code" spaces
@@ -196,7 +196,7 @@ jobs:
           read -r -d '' RELEASE_NOTE_BLOCK << EOM || true
           - Standalone Python $PY_VER
           - build123d v$B123_VER
-          - gggears v$GGGEARS_VER
+          - py_gearworks v$PYGEARS_VER
           - VSCode v$CODE_VER -- with VSCode extensions:
             - OCP CAD Viewer v$OCP_VER
             - Microsoft Python v$MSPY_VER
