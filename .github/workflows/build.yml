@@ -26,6 +26,7 @@ jobs:
             VSCODE_USER_DATA: vscode/VSCode-linux-x64/data/user-data/User
             VSCODE_START_SCRIPT: Start_VSCode.sh
             PYTHON_BIN: ./pyinst/cpython-3.12.12-linux-x86_64-gnu/bin/python3
+            PYTHON_LINK_DIR: ./pyinst/cpython-3.12-linux-x86_64-gnu
 
           - os: macos-14
             platform_slug: macos-arm64
@@ -33,6 +34,7 @@ jobs:
             VSCODE_CLI_BIN: ./vscode/Visual Studio Code.app/Contents/Resources/app/bin/code
             VSCODE_USER_DATA: vscode/code-portable-data/user-data/User
             VSCODE_START_SCRIPT: Start_VSCode.sh
+            PYTHON_LINK_DIR: ./pyinst/cpython-3.12-macos-aarch64-none
 
           - os: windows-latest
             platform_slug: windows-x86_64
@@ -40,6 +42,7 @@ jobs:
             VSCODE_CLI_BIN: vscode/bin/code.cmd
             VSCODE_USER_DATA: vscode/data/user-data/User
             VSCODE_START_SCRIPT: Start_VSCode.cmd
+            PYTHON_LINK_DIR: ./pyinst/cpython-3.12-windows-x86_64-none
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -87,16 +90,16 @@ jobs:
         shell: bash
         run: |
           export PATH="${GITHUB_WORKSPACE}/uv:$PATH"
-          rm -f ./pyinst/cpython-3.*/lib/python3.*/EXTERNALLY-MANAGED
-          uv pip install build123d ocp_vscode jupyter jupyter_console git+https://github.com/GarryBGoode/py_gearworks --python ./pyinst/cpython-3*
+          rm -f ${{ matrix.PYTHON_LINK_DIR }}/lib/python3.12/EXTERNALLY-MANAGED
+          uv pip install build123d ocp_vscode jupyter jupyter_console git+https://github.com/GarryBGoode/py_gearworks --python ${{ matrix.PYTHON_LINK_DIR }}
 
       - name: windows install python libs
         if: runner.os == 'Windows'
         shell: bash
         run: |
           export PATH="${GITHUB_WORKSPACE}/uv:$PATH"
-          rm -f ./pyinst/cpython-3.*/Lib/EXTERNALLY-MANAGED
-          uv pip install build123d ocp_vscode jupyter jupyter_console git+https://github.com/GarryBGoode/py_gearworks --python ./pyinst/cpython-3*
+          rm ${{ matrix.PYTHON_LINK_DIR }}/Lib/EXTERNALLY-MANAGED
+          uv pip install build123d ocp_vscode jupyter jupyter_console git+https://github.com/GarryBGoode/py_gearworks --python ${{ matrix.PYTHON_LINK_DIR }}
 
       - name: linux get VSCode
         if: runner.os == 'Linux'
