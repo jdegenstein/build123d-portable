@@ -25,9 +25,9 @@ jobs:
             VSCODE_CLI_BIN: ./vscode/VSCode-linux-x64/bin/code
             VSCODE_USER_DATA: vscode/VSCode-linux-x64/data/user-data/User
             VSCODE_START_SCRIPT: Start_VSCode.sh
-            PYTHON_BIN: ./pyinst/cpython-3.12.12-linux-x86_64-gnu/bin/python3
+            PYTHON_BIN: ./py/bin/python3
             DEL_PYTHON_LINK_DIR: ./pyinst/cpython-3.12-linux-x86_64-gnu
-            PYTHON_REAL_DIR: ./pyinst/cpython-3.12.12-linux-x86_64-gnu
+            PYTHON_REAL_DIR: ./pyinst/cpython-3.12.13-linux-x86_64-gnu
             
           - os: macos-14
             platform_slug: macos-arm64
@@ -36,7 +36,7 @@ jobs:
             VSCODE_USER_DATA: vscode/code-portable-data/user-data/User
             VSCODE_START_SCRIPT: Start_VSCode.sh
             DEL_PYTHON_LINK_DIR: ./pyinst/cpython-3.12-macos-aarch64-none
-            PYTHON_REAL_DIR: ./pyinst/cpython-3.12.12-macos-aarch64-none
+            PYTHON_REAL_DIR: ./pyinst/cpython-3.12.13-macos-aarch64-none
 
           - os: windows-latest
             platform_slug: windows-x86_64
@@ -45,7 +45,7 @@ jobs:
             VSCODE_USER_DATA: vscode/data/user-data/User
             VSCODE_START_SCRIPT: Start_VSCode.cmd
             DEL_PYTHON_LINK_DIR: ./pyinst/cpython-3.12-windows-x86_64-none
-            PYTHON_REAL_DIR: ./pyinst/cpython-3.12.12-windows-x86_64-none
+            PYTHON_REAL_DIR: ./pyinst/cpython-3.12.13-windows-x86_64-none
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -87,24 +87,29 @@ jobs:
           echo $PATH
           uv python find
           uv python list
-    
+
+      - name: shorten python path (all platforms)
+        shell: bash
+        run: |
+          unlink ${{ matrix.DEL_PYTHON_LINK_DIR }}
+          mv ${{ matrix.PYTHON_REAL_DIR }} ./py
+          rm -rf ./pyinst
+
       - name: linux/mac install python libs
         if: runner.os != 'Windows'
         shell: bash
         run: |
           export PATH="${GITHUB_WORKSPACE}/uv:$PATH"
-          unlink ${{ matrix.DEL_PYTHON_LINK_DIR }}
-          rm -f ${{ matrix.PYTHON_REAL_DIR }}/lib/python3.12/EXTERNALLY-MANAGED
-          uv pip install build123d ocp_vscode jupyter jupyter_console git+https://github.com/GarryBGoode/py_gearworks --python ${{ matrix.PYTHON_REAL_DIR }}
+          rm -f ./py/lib/python3.12/EXTERNALLY-MANAGED
+          uv pip install build123d ocp_vscode jupyter jupyter_console git+https://github.com/GarryBGoode/py_gearworks --python ./py
 
       - name: windows install python libs
         if: runner.os == 'Windows'
         shell: bash
         run: |
           export PATH="${GITHUB_WORKSPACE}/uv:$PATH"
-          unlink ${{ matrix.DEL_PYTHON_LINK_DIR }}
-          rm ${{ matrix.PYTHON_REAL_DIR }}/Lib/EXTERNALLY-MANAGED
-          uv pip install build123d ocp_vscode jupyter jupyter_console git+https://github.com/GarryBGoode/py_gearworks --python ${{ matrix.PYTHON_REAL_DIR }}
+          rm -f ./py/Lib/EXTERNALLY-MANAGED
+          uv pip install build123d ocp_vscode jupyter jupyter_console git+https://github.com/GarryBGoode/py_gearworks --python ./py
 
       - name: linux get VSCode
         if: runner.os == 'Linux'
@@ -227,11 +232,9 @@ jobs:
       - uses: actions/upload-artifact@v6
         with:
           name: build123d-portable-${{ matrix.os }}
-          # TODO: make cross-platform compat
-          include-hidden-files: true # This line is crucial for including hidden files
+          include-hidden-files: true
           path: |
-            pyinst/
-            python/
+            py/
             uv/
             vscode/
             ${{ matrix.VSCODE_START_SCRIPT }}
@@ -242,24 +245,20 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v')
         shell: bash
         run: |
-          # 1. Define the Release Filename
-          ASSET_NAME="build123d-portable_${{ github.ref_name }}-${{ matrix.platform_slug }}.${{ matrix.archive_ext }}"
+          # 1. Define the Release Filename (Shortened for Windows compat)
+          ASSET_NAME="b123d_${{ github.ref_name }}_${{ matrix.platform_slug }}.${{ matrix.archive_ext }}"
           echo "RELEASE_ASSET_FILE=$ASSET_NAME" >> $GITHUB_ENV
           
-          # 2. Define what to include (Folders + Launcher Scripts)
-          # Using a wildcard for the script ensures we catch .cmd or .sh depending on what exists
-          FILES_TO_PACK="uv pyinst python vscode Start_VSCode*"
+          # 2. Define what to include
+          FILES_TO_PACK="uv py vscode Start_VSCode*"
 
           # 3. Compress based on extension
           if [ "${{ matrix.archive_ext }}" == "tar.gz" ]; then
-            # Linux: Create .tar.gz
             tar -czf "$ASSET_NAME" $FILES_TO_PACK
           else
-            # Windows/Mac: Create .zip
             if [ "$RUNNER_OS" == "Windows" ]; then
               7z a -tzip "$ASSET_NAME" $FILES_TO_PACK
             else
-              # MacOS Zip with extra vscode install script
               FILES_TO_PACK="${FILES_TO_PACK} macos-install-vscode.sh"
               zip -r -q "$ASSET_NAME" $FILES_TO_PACK
             fi

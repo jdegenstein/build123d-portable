@@ -9,27 +9,12 @@ OS="$(uname -s)"
 # 3. Define Configuration based on OS
 if [ "$OS" = "Darwin" ]; then
     # --- MACOS CONFIGURATION ---
-    
-    # Path to the Python executable
-    # TODO: Update folder name if version changes
-    PYTHON_BIN="$BUNDLE_ROOT/pyinst/cpython-3.12.12-macos-aarch64-none/bin/python3"
-    
-    # Path to the VS Code executable
     VSCODE_EXEC="$BUNDLE_ROOT/vscode/Visual Studio Code.app/Contents/MacOS/Electron"
-    
-    # Data Directories
     DATA_ROOT="$BUNDLE_ROOT/vscode/code-portable-data"
 
 elif [ "$OS" = "Linux" ]; then
     # --- LINUX CONFIGURATION ---
-    
-    # Path to the Python executable
-    PYTHON_BIN="$BUNDLE_ROOT/pyinst/cpython-3.12.12-linux-x86_64-gnu/bin/python3"
-    
-    # Path to the VS Code executable
     VSCODE_EXEC="$BUNDLE_ROOT/vscode/VSCode-linux-x64/bin/code"
-    
-    # Data Directories
     DATA_ROOT="$BUNDLE_ROOT/vscode/VSCode-linux-x64/data"
     
 else
@@ -38,6 +23,7 @@ else
 fi
 
 # 4. Define Common Data Paths
+PYTHON_BIN="$BUNDLE_ROOT/py/bin/python3"
 USER_DATA_DIR="$DATA_ROOT/user-data"
 EXT_DIR="$DATA_ROOT/extensions"
 SETTINGS_FILE="$USER_DATA_DIR/User/settings.json"
