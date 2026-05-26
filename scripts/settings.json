@@ -2,6 +2,22 @@
     "python.useEnvironmentsExtension": false,
     "python.defaultInterpreterPath": "python",
     "OcpCadViewer.view.theme": "dark",
+
+    // Disable the Welcome Page and Walkthroughs on startup
+    "workbench.startupEditor": "none",
+    
+    // Disable the built-in AI/Copilot chat features and prompts
+    "chat.disableAIFeatures": true,
+    
+    // Disable all telemetry and crash reporting being sent to Microsoft
+    "telemetry.telemetryLevel": "off",
+
+    // Disable the popups recommending other extensions
+    "extensions.ignoreRecommendations": true,
+
+    // Disable automatic update checks for VSCode
+    "update.mode": "none"
+    
     // --------------------- WINDOWS ---------------------------
     "terminal.integrated.env.windows": {
         // Prepend Python DIR and Scripts DIR before system PATH
