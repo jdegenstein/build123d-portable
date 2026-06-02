@@ -16,7 +16,7 @@
     "extensions.ignoreRecommendations": true,
 
     // Disable automatic update checks for VSCode
-    "update.mode": "none"
+    "update.mode": "none",
     
     // --------------------- WINDOWS ---------------------------
     "terminal.integrated.env.windows": {
