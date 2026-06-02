@@ -26,8 +26,7 @@ echo "macOS applies a quarantine flag to downloaded files for security."
 echo "To run the bundled tools, the quarantine flag needs to be removed."
 echo ""
 echo "The following commands will be executed:"
-echo "  xattr -dr com.apple.quarantine $BUNDLE_ROOT/pyinst"
-echo "  xattr -dr com.apple.quarantine $BUNDLE_ROOT/python"
+echo "  xattr -dr com.apple.quarantine $BUNDLE_ROOT/py"
 echo "  xattr -dr com.apple.quarantine $BUNDLE_ROOT/uv"
 echo "  xattr -dr com.apple.quarantine $BUNDLE_ROOT/vscode/code-portable-data"
 echo ""
@@ -42,8 +41,7 @@ fi
 # Step 5: Remove quarantine flags
 echo ""
 echo "Removing quarantine flags..."
-xattr -dr com.apple.quarantine $BUNDLE_ROOT/pyinst
-xattr -dr com.apple.quarantine $BUNDLE_ROOT/python
+xattr -dr com.apple.quarantine $BUNDLE_ROOT/py
 xattr -dr com.apple.quarantine $BUNDLE_ROOT/uv
 xattr -dr com.apple.quarantine $BUNDLE_ROOT/vscode/code-portable-data
 
