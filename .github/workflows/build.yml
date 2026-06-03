@@ -40,7 +40,7 @@ jobs:
 
           - os: windows-latest
             platform_slug: windows-x86_64
-            archive_ext: zip
+            archive_ext: exe
             VSCODE_CLI_BIN: vscode/bin/code.cmd
             VSCODE_USER_DATA: vscode/data/user-data/User
             VSCODE_START_SCRIPT: Start_VSCode.cmd
@@ -257,7 +257,8 @@ jobs:
             tar -czf "$ASSET_NAME" $FILES_TO_PACK
           else
             if [ "$RUNNER_OS" == "Windows" ]; then
-              7z a -tzip "$ASSET_NAME" $FILES_TO_PACK
+              # Create a 7-Zip Self-Extracting Executable
+              7z a -sfx7z.sfx -mx=9 -mmt=on "$ASSET_NAME" $FILES_TO_PACK
             else
               FILES_TO_PACK="${FILES_TO_PACK} macos-install-vscode.sh"
               zip -r -q "$ASSET_NAME" $FILES_TO_PACK
