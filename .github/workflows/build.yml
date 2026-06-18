@@ -40,7 +40,7 @@ jobs:
 
           - os: windows-latest
             platform_slug: windows-x86_64
-            archive_ext: zip
+            archive_ext: exe
             VSCODE_CLI_BIN: vscode/bin/code.cmd
             VSCODE_USER_DATA: vscode/data/user-data/User
             VSCODE_START_SCRIPT: Start_VSCode.cmd
@@ -248,19 +248,25 @@ jobs:
           # 1. Define the Release Filename (Shortened for Windows compat)
           ASSET_NAME="b123d_${{ github.ref_name }}_${{ matrix.platform_slug }}.${{ matrix.archive_ext }}"
           echo "RELEASE_ASSET_FILE=$ASSET_NAME" >> $GITHUB_ENV
-          
-          # 2. Define what to include
-          FILES_TO_PACK="uv py vscode Start_VSCode*"
 
-          # 3. Compress based on extension
+          # 2. Prevent "tarbomb" by moving files into a root wrapper directory
+          WRAPPER_DIR="build123d-portable_${{ github.ref_name }}"
+          mkdir -p "$WRAPPER_DIR"
+          mv uv py vscode Start_VSCode* "$WRAPPER_DIR"/
+
+          # Add macOS specific script if on the macOS runner
+          if [ "$RUNNER_OS" == "macOS" ]; then
+            mv macos-install-vscode.sh "$WRAPPER_DIR"/
+          fi
+
+          # 3. Compress the wrapper directory instead of the raw files
           if [ "${{ matrix.archive_ext }}" == "tar.gz" ]; then
-            tar -czf "$ASSET_NAME" $FILES_TO_PACK
+            tar -czf "$ASSET_NAME" "$WRAPPER_DIR"
           else
             if [ "$RUNNER_OS" == "Windows" ]; then
-              7z a -tzip "$ASSET_NAME" $FILES_TO_PACK
+              7z a -sfx7z.sfx -mx=9 -mmt=on "$ASSET_NAME" "$WRAPPER_DIR"
             else
-              FILES_TO_PACK="${FILES_TO_PACK} macos-install-vscode.sh"
-              zip -r -q "$ASSET_NAME" $FILES_TO_PACK
+              zip -r -q "$ASSET_NAME" "$WRAPPER_DIR"
             fi
           fi
 
