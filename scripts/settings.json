@@ -1,5 +1,5 @@
 {
-    "python.useEnvironmentsExtension": false,
+    "python.useEnvironmentsExtension": true,
     "python.defaultInterpreterPath": "python",
     "OcpCadViewer.view.theme": "dark",
 
